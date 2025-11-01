@@ -1,24 +1,29 @@
-const images = document.querySelectorAll("#parent img");
+const divs = document.querySelectorAll(".image");
 
-images.forEach(img => {
-  img.addEventListener("dragstart", e => {
-    e.dataTransfer.setData("src", e.target.src);
-    e.target.classList.add("selected");
-  });
+divs.forEach(div => {
+	div.addEventListener("dragstart", (e)=>{
+		e.dataTransfer.setData("text", div.id);
+	})
 
-  img.addEventListener("dragend", e => {
-    e.target.classList.remove("selected");
-  });
+	div.addEventListener("dragover", (e)=>{
+		e.preventDefault();
+	})
 
-  img.addEventListener("dragover", e => e.preventDefault());
+	div.addEventListener("drop", (e)=>{
+		e.preventDefault();
 
-  img.addEventListener("drop", e => {
-    e.preventDefault();
-    const draggedSrc = e.dataTransfer.getData("src");
-    const targetSrc = e.target.src;
-    e.target.src = draggedSrc;
+		const dropedElement = e.target;
+		const dropedElementImage = getComputedStyle(dropedElement).backgroundImage;
+		const dropedElementTxt = dropedElement.textContent;
 
-    const draggedImg = Array.from(images).find(img => img.src === draggedSrc && img !== e.target);
-    if (draggedImg) draggedImg.src = targetSrc;
-  });
-});
+		const draggedElement = document.getElementById(e.dataTransfer.getData("text"));
+		const draggedElementImage = getComputedStyle(draggedElement).backgroundImage;
+		const draggedElementTxt = draggedElement.textContent;
+
+		draggedElement.style.backgroundImage = dropedElementImage;
+		draggedElement.textContent = dropedElementTxt;
+
+		dropedElement.style.backgroundImage = draggedElementImage;
+		dropedElement.textContent = draggedElementTxt;
+	})
+})
