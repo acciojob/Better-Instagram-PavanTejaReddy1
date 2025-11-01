@@ -1,36 +1,28 @@
-const divs = document.querySelectorAll(".image");
+const images = document.querySelectorAll("#parent img");
 
-divs.forEach(div => {
-  div.addEventListener("dragstart", e => {
-    e.dataTransfer.setData("text", div.id);
-    div.classList.add("selected");
+images.forEach(img => {
+  img.addEventListener("dragstart", e => {
+    e.dataTransfer.setData("src", e.target.src);
+    e.target.classList.add("selected");
   });
 
-  div.addEventListener("dragend", () => {
-    div.classList.remove("selected");
+  img.addEventListener("dragend", e => {
+    e.target.classList.remove("selected");
   });
 
-  div.addEventListener("dragover", e => {
-    e.preventDefault(); // Allow drop
-  });
-
-  div.addEventListener("drop", e => {
+  img.addEventListener("dragover", e => {
     e.preventDefault();
+  });
 
-    const droppedOn = e.target;
-    const draggedId = e.dataTransfer.getData("text");
-    const dragged = document.getElementById(draggedId);
+  img.addEventListener("drop", e => {
+    e.preventDefault();
+    const draggedSrc = e.dataTransfer.getData("src");
+    const targetSrc = e.target.src;
 
-    // Swap background images
-    const draggedBg = getComputedStyle(dragged).backgroundImage;
-    const droppedBg = getComputedStyle(droppedOn).backgroundImage;
+    e.target.src = draggedSrc;
 
-    dragged.style.backgroundImage = droppedBg;
-    droppedOn.style.backgroundImage = draggedBg;
-
-    // Swap text content
-    const tempText = dragged.textContent;
-    dragged.textContent = droppedOn.textContent;
-    droppedOn.textContent = tempText;
+    // find original dragged image and swap
+    const draggedImg = Array.from(images).find(img => img.src === draggedSrc);
+    if (draggedImg) draggedImg.src = targetSrc;
   });
 });
